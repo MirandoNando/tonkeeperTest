@@ -7,10 +7,11 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <link rel="manifest" href="manifest.webmanifest">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body>
     <div id="unity-container">
-      <canvas id="unity-canvas" width=1920 height=1080 tabindex="-1"></canvas>
+      <canvas id="unity-canvas" width="1920" height="1080" tabindex="-1"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -20,5 +21,30 @@
       <div id="unity-warning"> </div>
     </div>
     <script src="index.js"></script>
+    <script>
+      // Inisialisasi Telegram WebApp API
+      const tg = window.Telegram.WebApp;
+
+      // Mendapatkan data user dari Telegram WebApp API
+      const userId = tg.initDataUnsafe?.user?.id || "Unknown";
+      const userName = tg.initDataUnsafe?.user?.username || "No username";
+      const firstName = tg.initDataUnsafe?.user?.first_name || "No first name";
+      const lastName = tg.initDataUnsafe?.user?.last_name || "No last name";
+
+      console.log("User ID:", userId);
+      console.log("Username:", userName);
+      console.log("Full Name:", `${firstName} ${lastName}`);
+
+      // Mengirim data user ke Unity WebGL jika Unity instance tersedia
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.unityInstance) {
+          window.unityInstance.SendMessage(
+            "TelegramHandler", // Nama GameObject di Unity
+            "ReceiveUserInfo", // Nama fungsi di Unity
+            `${userId}:${userName}:${firstName}:${lastName}` // Data yang dikirim
+          );
+        }
+      });
+    </script>
   </body>
 </html>
